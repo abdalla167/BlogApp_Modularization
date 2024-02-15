@@ -8,19 +8,18 @@ import com.example.commen.Resource
 import com.example.data.room.BlogDAO
 import com.example.data.room.BlogKey
 import com.example.domain.model.Blog
-import com.example.domain.repositroy.GetPagerBlogsRepo
+import com.example.domain.use_case.GetBlogsUseCase
 import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class BlogRemoteMediator @Inject constructor(
     private val initialPage: Int = 1,
-    private val getPagerBlogsRepo: GetPagerBlogsRepo,
+    private val getPagerBlogsRepo: GetBlogsUseCase,
     private val blogDAO: BlogDAO
 ) : RemoteMediator<Int, Blog>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Blog>): MediatorResult {
 
         return try {
-
             val page: Int = when (loadType) {
                 LoadType.APPEND -> {
                     val remoteKeys = getLastKey(state)
@@ -36,8 +35,7 @@ class BlogRemoteMediator @Inject constructor(
                 }
             }
 
-            val response =
-                getPagerBlogsRepo.getPagerBlogs(page = page, limit = state.config.pageSize)
+            val response = getPagerBlogsRepo.getPagerBlogs(page = page, limit = state.config.pageSize)
             val endOfPagination = response.data?.size!! < state.config.pageSize
 
             when (response) {
@@ -60,6 +58,7 @@ class BlogRemoteMediator @Inject constructor(
 
 
                 }
+
                 is Resource.Error -> {
                     MediatorResult.Error(Exception())
 
@@ -76,7 +75,7 @@ class BlogRemoteMediator @Inject constructor(
                     MediatorResult.Success(false)
                 }
             } else {
-                MediatorResult.Success(true)
+                    MediatorResult.Success(true)
             }
 
 

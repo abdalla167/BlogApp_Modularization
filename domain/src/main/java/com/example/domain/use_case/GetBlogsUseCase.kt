@@ -2,28 +2,15 @@ package com.example.domain.use_case
 
 import com.example.commen.Resource
 import com.example.domain.model.Blog
-import com.example.domain.repositroy.BlogsRepositry
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.example.domain.repositroy.GetPagerBlogsRepo
 import javax.inject.Inject
 
 
-class GetBlogsUseCase @Inject constructor( private val blogsRepositry: BlogsRepositry)
+class GetBlogsUseCase @Inject constructor( private val blogsRepositry: GetPagerBlogsRepo):GetPagerBlogsRepo
 {
 
-     operator fun  invoke():Flow<Resource<List<Blog>>> = flow {
-
-        emit(Resource.Loading(null))
-        try {
-
-            val response =blogsRepositry.getBlogs()
-            emit(Resource.Success(data = response))
-
-
-        }catch (e:Exception)
-        {
-            emit(Resource.Error("Error Massage "))
-        }
+    override suspend fun getPagerBlogs(page: Int, limit: Int): Resource<List<Blog>> {
+        return  blogsRepositry.getPagerBlogs(page, limit)
     }
 
 }

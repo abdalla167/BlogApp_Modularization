@@ -11,13 +11,6 @@ interface ApiService
 {
 
     @GET("post")
-    suspend fun getBlogs(
-        @Header("app-id") appId:String= Constant.APP_ID
-    ) : Response<BlogsDTO>
-
-
-
-    @GET("post")
     suspend fun getBlogsPagination(
         @Header("app-id") appId: String = Constant.APP_ID,
         @Query("page") page: Int,

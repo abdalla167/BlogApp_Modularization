@@ -5,24 +5,26 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
 
-abstract class SafeApiRequest {
+abstract class  SafeApiRequest   {
 
-    suspend fun <T : Any> safeApiRequest(call: suspend () -> Response<T>): T {
+     suspend fun <T : Any> safeApiRequest(call: suspend () -> Response<T>): Response<T> {
         val response = call.invoke()
         if (response.isSuccessful) {
-            return response.body()!!
+            return response
         } else {
             val responseErr = response.errorBody()?.string()
             val message = StringBuilder()
             responseErr.let {
                 try {
-                    message.append(JSONObject(it).getString("error"))
+                    message.append(it?.let { it1 -> JSONObject(it1).getString("error") })
                 } catch (e: JSONException) {
+
                 }
             }
-            Log.d("TAG", "safeApiRequest: ${message.toString()}")
+            Log.d("TAG", "safeApiRequest: $message")
             throw ApiException(message.toString())
         }
     }
+
 
 }
