@@ -1,5 +1,6 @@
 package com.example.data.pagging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -36,12 +37,15 @@ class BlogRemoteMediator @Inject constructor(
             }
 
             val response = getPagerBlogsRepo.getPagerBlogs(page = page, limit = state.config.pageSize)
+            Log.d("TAG", "response ${response.data?.size}")
             val endOfPagination = response.data?.size!! < state.config.pageSize
 
             when (response) {
                 is Resource.Success -> {
                     val body = response.data
-
+                    if (body != null) {
+                        Log.d("TAG", "load: ${body.get(0).text}")
+                    }
                     if (loadType == LoadType.REFRESH) {
                         blogDAO.deleteAllBlogKey()
                         blogDAO.deleteAllItems()

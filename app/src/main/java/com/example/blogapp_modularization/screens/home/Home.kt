@@ -45,10 +45,11 @@ fun HomeScreen(
         viewModel.processIntent(HomeIntent.FetchData)
     }
     val state by viewModel.blogs.collectAsState()
-    when (val resource = state) {
+    when (state)
+    {
         is Resource.Error -> {
             Box(modifier = Modifier.fillMaxSize()) {
-                Text(text = resource.message ?: "Unknown error", modifier = Modifier.align(Alignment.Center))
+                Text(text = state.message ?: "Unknown error", modifier = Modifier.align(Alignment.Center))
             }
         }
         is Resource.Loading -> {
@@ -57,7 +58,7 @@ fun HomeScreen(
             }
         }
         is Resource.Success -> {
-            val lazyPagingItems = resource.data?.collectAsLazyPagingItems()
+            val lazyPagingItems = state.data?.collectAsLazyPagingItems()
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 lazyPagingItems?.let {
                     items(count = it.itemCount) { index ->
